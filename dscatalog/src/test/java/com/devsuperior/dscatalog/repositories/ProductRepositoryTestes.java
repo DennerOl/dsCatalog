@@ -52,4 +52,19 @@ public class ProductRepositoryTestes {
 		Optional<Product> result = repository.findById(exintingId);
 		Assertions.assertFalse(result.isPresent());
 	}
+	
+	@Test 
+	public void retornaNaoVazioIdExistente() {
+		Optional<Product> result = repository.findById(exintingId);
+		Assertions.assertTrue(result.isPresent());
+	}
+	
+	@Test
+	public void retornaVazioIdNaoExistente() {
+		Product product = Factory.createProduct();
+		product.setId(null);
+		Assertions.assertNull(product.getId());
+		
+	}
+	
 }
