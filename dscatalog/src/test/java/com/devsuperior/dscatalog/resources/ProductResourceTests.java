@@ -1,6 +1,7 @@
 package com.devsuperior.dscatalog.resources;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -24,6 +25,7 @@ import com.devsuperior.dscatalog.dto.ProductDTO;
 import com.devsuperior.dscatalog.service.ProductService;
 import com.devsuperior.dscatalog.service.exceptions.ResourceNotFoundException;
 import com.devsuperior.dscatalog.testes.Factory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 // teste da camada controler anotação
 @WebMvcTest(ProductResource.class)
@@ -35,6 +37,10 @@ public class ProductResourceTests {
 // usar esta anotação junto com WebMvc	
 	@MockBean
 	private ProductService service;
+	
+// converte o obj java para json
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	private long existingId;
 	private long nonExistingId;
@@ -57,7 +63,11 @@ public class ProductResourceTests {
 // simulação service para findById
 		when(service.findByid(existingId)).thenReturn(productDTO);
 		when(service.findByid(nonExistingId)).thenThrow(ResourceNotFoundException.class);
-		
+
+// simulação service para update
+		when(service.update(eq (existingId), any())).thenReturn(productDTO);
+		when(service.update(eq (nonExistingId), any())).thenThrow(ResourceNotFoundException.class);
+// quando chamar o service com id existente não faça nada 		
 	}
 	
 	@Test
@@ -91,5 +101,38 @@ public class ProductResourceTests {
 		
 				result.andExpect(status().isNotFound());
 	}
+	@Test
+	public void updateDeveriaRetornarProdutoQuandoIdExiste() throws Exception {
+		
+		String jsonBody = objectMapper.writeValueAsString(productDTO);
+			
+		ResultActions result =
+				mockMvc.perform(get("/products/{id}", existingId)
+						.content(jsonBody)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isOk());
+		result.andExpect(jsonPath("$.id").exists());
+		result.andExpect(jsonPath("$.name").exists());
+		result.andExpect(jsonPath("$.description").exists());
+		
+		}
+		
+		
+	@Test
+	public void updateDeveriaRetornarNotFoundQuandoIdInexiste() throws Exception {
 	
-}
+		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		
+		ResultActions result =
+				mockMvc.perform(get("/products/{id}", nonExistingId)
+						.content(jsonBody)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isNotFound());
+		
+	}
+}	
+	
