@@ -8,16 +8,14 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
 
-import javax.print.attribute.standard.Media;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -176,7 +174,7 @@ public class ProductResourceTests {
 		String jsonBody = objectMapper.writeValueAsString(productDTO);
 			
 		ResultActions result =
-				mockMvc.perform(get("/products/{id}", existingId)
+				mockMvc.perform(put("/products/{id}", existingId)
 						.content(jsonBody)
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON));
@@ -195,7 +193,7 @@ public class ProductResourceTests {
 		String jsonBody = objectMapper.writeValueAsString(productDTO);
 		
 		ResultActions result =
-				mockMvc.perform(get("/products/{id}", nonExistingId)
+				mockMvc.perform(put("/products/{id}", nonExistingId)
 						.content(jsonBody)
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON));
