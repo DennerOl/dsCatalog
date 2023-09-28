@@ -1,10 +1,13 @@
 package com.devsuperior.dscatalog.dto;
 
+import java.io.Serializable;
+
 import org.springframework.beans.BeanUtils;
 
 import com.devsuperior.dscatalog.entities.Category;
 
-public class CategoryDTO {
+@SuppressWarnings("serial")
+public class CategoryDTO implements Serializable {
 
 	private Long id;
 	private String  name;
