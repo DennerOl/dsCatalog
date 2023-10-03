@@ -8,5 +8,10 @@ import com.devsuperior.dscatalog.entities.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 	
+/* tenho que implementar um metodo para a classe
+ * UserInsertValidator verificar se email existe 	
+ */
+	
+	User findByEmail(String email);
 
 }
