@@ -1,16 +1,21 @@
 package com.devsuperior.dscatalog.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.devsuperior.dscatalog.UserDetailsProjection;
 import com.devsuperior.dscatalog.dto.RoleDTO;
 import com.devsuperior.dscatalog.dto.UserDTO;
 import com.devsuperior.dscatalog.dto.UserInsertDTO;
@@ -27,14 +32,16 @@ import jakarta.persistence.EntityNotFoundException;
 
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
 	@Autowired
 	private UserRepository repository;
+	
 	@Autowired
 	private RoleRepository roleRepository;
+	
 	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 
 	@Transactional(readOnly = true)
 	public Page<UserDTO> findAllPaged(Pageable pageable) {
@@ -99,6 +106,29 @@ public class UserService {
 			Role role = roleRepository.getReferenceById(roleDto.getId());
 			entity.getRoles().add(role);
 		}
+	}
+
+// busca no banco de dados um usuario que chegou como parametro	
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		List<UserDetailsProjection> result = repository.searchUserAndRolesByEmail(username);
+		if (result.size() == 0) {
+			throw new UsernameNotFoundException("User not found");
+		}
+// salvo um usuario com os dados da projection	
+		
+		User user = new User();
+		user.setEmail(username);
+		user.setPassword(result.get(0).getPassword());
+		
+/* tenho que pegar os Role também
+ * pois um usuario está associado ao um role 
+ * para cada elemento da minha lista result faço os gets
+ */		
+		for(UserDetailsProjection projection : result) {
+			user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
+		}
+		return user;
 	}
 	
 }
