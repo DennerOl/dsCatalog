@@ -60,6 +60,28 @@ _______________________>Depois da revisão implementei a parte de Teste automati
 
 ●	Teste de integração na camada web
 
+_______________________>Em seguida veio a parte de Segurança do projeto com SpringSecurity, as competências foram as seguintes:
+
+⦁	Modelo de dados de usuários e perfis
+
+⦁	Validação com Bean Validation
+
+⦁	Annotations
+
+⦁	Customizando a resposta HTTP
+
+⦁	Validações personalizadas com acesso a banco
+
+⦁	Login e controle de acesso
+
+⦁	Spring Security
+
+⦁	OAuth 2.0
+
+⦁	Token JWT
+
+⦁	Autorização de rotas por perfil
+
 
 
 
