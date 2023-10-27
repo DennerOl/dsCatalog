@@ -62,7 +62,7 @@ public class ProductServiceIntegration {
 // crio um obj de pagina (preparo os dados)
 		PageRequest pageRequest = PageRequest.of(0, 10);
 // faço a ação	
-		Page<ProductDTO> result = service.findAllPaged(pageRequest);
+		Page<ProductDTO> result = service.findAllPaged1(pageRequest);
 // Assertion para test
 		
 		Assertions.assertFalse(result.isEmpty());
@@ -83,7 +83,7 @@ public class ProductServiceIntegration {
 // crio um obj de pagina (preparo os dados)
 		PageRequest pageRequest = PageRequest.of(50, 10);
 // faço a ação	
-		Page<ProductDTO> result = service.findAllPaged(pageRequest);
+		Page<ProductDTO> result = service.findAllPaged1(pageRequest);
 // Assertion para test
 		
 		Assertions.assertTrue(result.isEmpty());
@@ -97,7 +97,7 @@ public class ProductServiceIntegration {
 // crio um obj de pagina (preparo os dados)
 		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("name"));
 // faço a ação	
-		Page<ProductDTO> result = service.findAllPaged(pageRequest);
+		Page<ProductDTO> result = service.findAllPaged1(pageRequest);
 // Assertion para test
 		
 		Assertions.assertFalse(result.isEmpty());

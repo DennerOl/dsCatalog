@@ -64,7 +64,7 @@ public class ProductResourceTests {
 // instancio uma lista ja com elemento dentro dela
 		page = new PageImpl<>(List.of(productDTO));
 // chamo no service com qualquer argumento e retorno page		
-		when(service.findAllPaged(any())).thenReturn(page);
+		when(service.findAllPaged1(any())).thenReturn(page);
 		
 // simulação service para findById
 		when(service.findByid(existingId)).thenReturn(productDTO);

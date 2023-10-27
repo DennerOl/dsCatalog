@@ -15,13 +15,8 @@ import com.devsuperior.dscatalog.projection.ProductProjection;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	/*
-	 * consulta que realiza o caso de uso O usuário informa: ⦁ trecho do nome do
-	 * produto (opcional) ⦁ categorias de produto desejadas (opcional) ⦁ número da
-	 * página desejada ⦁ quantidade de itens por página
-	 * 
-	 * o sistemas irá retornar O sistema informa uma listagem paginada dos produtos
-	 * com suas respectivas categorias, conforme os critérios de consulta, ordenados
-	 * por nome
+	 * a consulta retorna o produto com seu id de uma determinada categoria informada como parametro
+	 * lembrar que os paramentros são opcionais 
 	 */
 	@Query(nativeQuery = true, value = """
 			SELECT DISTINCT tb_product.id,

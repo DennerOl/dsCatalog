@@ -1,5 +1,7 @@
 package com.devsuperior.dscatalog.service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import com.devsuperior.dscatalog.dto.CategoryDTO;
 import com.devsuperior.dscatalog.dto.ProductDTO;
 import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.entities.Product;
+import com.devsuperior.dscatalog.projection.ProductProjection;
 import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
 import com.devsuperior.dscatalog.service.exceptions.DatabaseException;
@@ -32,13 +35,38 @@ public class ProductService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 
+	
+	
 	@Transactional(readOnly = true)
-	public Page<ProductDTO> findAllPaged(Pageable pageable) {
+	public Page<ProductProjection> findAllPaged(String name, String categoryId, Pageable pageable) {
+/* tenho que converter o categoryId de string para Long	
+ * separo por virgula em um vetor de string
+ * depois converto para lista o vetor
+ * depois pego a lista e converto para Long	
+ */	
+		/*
+		String[] vet = categoryId.split(",");
+		List<String> list = Arrays.asList(vet);
+		List<Long> categoryIds = list.stream().map(x -> Long.parseLong(x)).toList();
+		*/
+// forma resumida		
+		List <Long> categoryIds = Arrays.asList();
+// se category for diferente de 0 eu passei algum id de categoria
+		if(!"0".equals(categoryId)) {
+			categoryIds = Arrays.asList(categoryId.split(",")).stream().map(Long::parseLong).toList();
+		}	
+		return repository.searchProducts(categoryIds, name, pageable);
+		
+	}
+/*	se for verificar os testes deve descomentar aqui e comentar acima
+ * 
+	@Transactional(readOnly = true)
+	public Page<ProductDTO> findAllPaged1(Pageable pageable) {
 		Page<Product> list = repository.findAll(pageable);
 		return list.map(x -> new ProductDTO(x));
 		
 	}
-
+*/
 	@Transactional(readOnly = true)
 	public ProductDTO findByid(Long id) {
 		Optional<Product> obj = repository.findById(id);
