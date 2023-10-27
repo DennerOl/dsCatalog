@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.devsuperior.dscatalog.UserDetailsProjection;
 import com.devsuperior.dscatalog.entities.User;
+import com.devsuperior.dscatalog.projection.UserDetailsProjection;
 
 
 @Repository
