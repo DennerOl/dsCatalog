@@ -1,5 +1,8 @@
 # dsCatalog
 
+![Dscatalog](https://github.com/DennerOl/dsCatalog/assets/124217386/11bf2324-61b5-41c1-af15-9cba4c2d66a9)
+
+
 Neste projeto iniciei fazendo uma revisão de todo conteudo que aprendi 
 
 
@@ -82,9 +85,26 @@ _______________________>Em seguida veio a parte de Segurança do projeto com Spr
 
 ⦁	Autorização de rotas por perfil
 
+_______________________> Consulta com parametros opcionais 
+
+O usuário informa:
+
+⦁	trecho do nome do produto (opcional)
+
+⦁	categorias de produto desejadas (opcional)
+
+⦁	número da página desejada
+
+⦁	quantidade de itens por página
+
+consulta----> {{host}}/products?page=0&size=12&name=ma&categoryId=1
+
+Resultado-----> O sistema informa uma listagem paginada dos produtos com suas respectivas categorias, conforme os critérios de consulta, ordenados por nome.
+
+
+![consulta personalizada](https://github.com/DennerOl/dsCatalog/assets/124217386/94cd783e-1f07-46ab-af7e-edbf65ed2a0e)
 
 
 
-![Dscatalog](https://github.com/DennerOl/dsCatalog/assets/124217386/11bf2324-61b5-41c1-af15-9cba4c2d66a9)
 
 
