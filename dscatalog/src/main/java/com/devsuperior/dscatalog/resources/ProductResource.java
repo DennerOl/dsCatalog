@@ -35,12 +35,12 @@ public class ProductResource {
  * 	estudo de caso de uso produto com suas respectivas categorias 
  */
 	@GetMapping
-	public ResponseEntity<Page<ProductProjection>> findAll(
+	public ResponseEntity<Page<ProductDTO>> findAll(
 // se não informar o name na requisição e pego o defautValue
 		@RequestParam(value = "name", defaultValue = "") String name,
 		@RequestParam(value = "categoryId", defaultValue = "0")String categoryId,
 			Pageable pageable){		
-		Page<ProductProjection> list = service.findAllPaged(name, categoryId, pageable);	
+		Page<ProductDTO> list = service.findAllPaged(name, categoryId, pageable);	
 		
 		return ResponseEntity.ok().body(list);
 	}

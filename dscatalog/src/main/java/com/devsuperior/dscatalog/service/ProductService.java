@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -38,25 +39,27 @@ public class ProductService {
 	
 	
 	@Transactional(readOnly = true)
-	public Page<ProductProjection> findAllPaged(String name, String categoryId, Pageable pageable) {
+	public Page<ProductDTO> findAllPaged(String name, String categoryId, Pageable pageable) {
 /* tenho que converter o categoryId de string para Long	
  * separo por virgula em um vetor de string
  * depois converto para lista o vetor
  * depois pego a lista e converto para Long	
- */	
-		/*
-		String[] vet = categoryId.split(",");
-		List<String> list = Arrays.asList(vet);
-		List<Long> categoryIds = list.stream().map(x -> Long.parseLong(x)).toList();
-		*/
-// forma resumida		
+ */			
 		List <Long> categoryIds = Arrays.asList();
 // se category for diferente de 0 eu passei algum id de categoria
 		if(!"0".equals(categoryId)) {
 			categoryIds = Arrays.asList(categoryId.split(",")).stream().map(Long::parseLong).toList();
 		}	
-		return repository.searchProducts(categoryIds, name, pageable);
-		
+		Page<ProductProjection> page = repository.searchProducts(categoryIds, name, pageable);
+// gero uma lista com os ids que vieram da projection		
+		List<Long> productIds = page.map(x-> x.getId()).toList();
+// aqui busco uma lista de produtos com os ids que chegou acima		
+		List<Product> entities = repository.searchProductsWithCategories(productIds);
+// converto para dto pegando o construtor que tem a categoria junto
+		List<ProductDTO> dtos = entities.stream().map(p -> new ProductDTO(p, p.getCategories())).toList();
+// gero uma pagina apartir dos dtos que recebi acima		
+		Page<ProductDTO> pageDto = new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());
+		return pageDto;
 	}
 /*	se for verificar os testes deve descomentar aqui e comentar acima
  * 
