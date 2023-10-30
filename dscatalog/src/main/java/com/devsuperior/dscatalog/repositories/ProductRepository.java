@@ -19,6 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	 * lembrar que os paramentros são opcionais 
 	 */
 	@Query(nativeQuery = true, value = """
+			SELECT * FROM (	
 			SELECT DISTINCT tb_product.id,
 				tb_product.name
 			FROM
@@ -30,8 +31,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			WHERE (:categoryIds IS NULL OR tb_product_category.category_id IN :categoryIds)
 
 			AND LOWER (tb_product.name) LIKE LOWER( CONCAT('%',:name,'%'))
-			ORDER BY tb_product.name
-""", 
+			
+			)	AS tb_result
+				""", 
 					countQuery = """
 		SELECT COUNT(*) FROM (					
 			SELECT DISTINCT tb_product.id,
@@ -44,9 +46,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 				tb_product_category.product_id
 			WHERE (:categoryIds IS NULL OR tb_product_category.category_id IN :categoryIds)
 			AND LOWER (tb_product.name) LIKE LOWER( CONCAT('%',:name,'%'))
-			ORDER BY tb_product.name
-)	AS tb_result		
-							""")
+			)	AS tb_result		
+				""")
 	Page<ProductProjection> searchProducts(List<Long> categoryIds, String name, Pageable pageable);
 
 	
@@ -54,6 +55,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	 * ela traz as categorias dos produto que listei com a consulta acima 
 	 * 
 	 */
-	@Query("SELECT obj FROM Product obj JOIN FETCH obj.categories WHERE obj.id IN :productIds ORDER BY obj.name")
+	@Query("SELECT obj FROM Product obj JOIN FETCH obj.categories WHERE obj.id IN :productIds")
 	List<Product> searchProductsWithCategories(List<Long> productIds);
 }

@@ -22,6 +22,7 @@ import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
 import com.devsuperior.dscatalog.service.exceptions.DatabaseException;
 import com.devsuperior.dscatalog.service.exceptions.ResourceNotFoundException;
+import com.devsuperior.dscatalog.util.Utils;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -55,6 +56,8 @@ public class ProductService {
 		List<Long> productIds = page.map(x-> x.getId()).toList();
 // aqui busco uma lista de produtos com os ids que chegou acima		
 		List<Product> entities = repository.searchProductsWithCategories(productIds);
+		// aqui faço a copia da lista ordenada para a lista sem ordem
+		entities = Utils.replace(page.getContent(), entities);
 // converto para dto pegando o construtor que tem a categoria junto
 		List<ProductDTO> dtos = entities.stream().map(p -> new ProductDTO(p, p.getCategories())).toList();
 // gero uma pagina apartir dos dtos que recebi acima		
