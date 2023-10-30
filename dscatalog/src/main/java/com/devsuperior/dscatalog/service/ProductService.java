@@ -39,6 +39,7 @@ public class ProductService {
 
 	
 	
+	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public Page<ProductDTO> findAllPaged(String name, String categoryId, Pageable pageable) {
 /* tenho que converter o categoryId de string para Long	
@@ -57,7 +58,7 @@ public class ProductService {
 // aqui busco uma lista de produtos com os ids que chegou acima		
 		List<Product> entities = repository.searchProductsWithCategories(productIds);
 		// aqui faço a copia da lista ordenada para a lista sem ordem
-		entities = Utils.replace(page.getContent(), entities);
+		entities = (List<Product>) Utils.replace(page.getContent(), entities);
 // converto para dto pegando o construtor que tem a categoria junto
 		List<ProductDTO> dtos = entities.stream().map(p -> new ProductDTO(p, p.getCategories())).toList();
 // gero uma pagina apartir dos dtos que recebi acima		
