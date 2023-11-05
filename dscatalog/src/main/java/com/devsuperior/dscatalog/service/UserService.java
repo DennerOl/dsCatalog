@@ -61,6 +61,12 @@ public class UserService implements UserDetailsService {
 	public UserDTO insert(UserInsertDTO dto) {
 		User entity = new User();
 		copyDtoToEntity(dto, entity);
+
+//ignoro qualquer perfil que venha no json e coloco só o perfil operador
+		entity.getRoles().clear();
+		Role role = roleRepository.findByAuthority("ROLE_OPERATOR");
+		entity.getRoles().add(role);
+		
 //pego a senha que veio do userInsertDto e transformo com o encode
 		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
 		entity = repository.save(entity);
