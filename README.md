@@ -106,5 +106,14 @@ Resultado-----> O sistema informa uma listagem paginada dos produtos com suas re
 
 
 
+EXPLICAR NO README 
+ caso de recuperar senha do usuario 
+
+1 verificar se email existe
+2 gerar um token com uma validade de x minutos e salvar no banco de dados
+3 enviar um email para o usuario com um link para usar o token
+
+
+
 
 

@@ -18,7 +18,7 @@ public class AuthResource {
 
 	@Autowired
 	private AuthService authService;
-
+// recebo o email do usuario e chamo o metodo 
 	@PostMapping(value = "/recover-token")
 	public ResponseEntity<Void> createRecoverToken(@Valid @RequestBody EmailDTO body) {
 		authService.createRecoverToken(body);
