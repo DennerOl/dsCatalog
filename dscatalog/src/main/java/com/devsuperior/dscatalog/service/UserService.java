@@ -42,6 +42,9 @@ public class UserService implements UserDetailsService {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private AuthService authService;
 
 	@Transactional(readOnly = true)
 	public Page<UserDTO> findAllPaged(Pageable pageable) {
@@ -54,6 +57,12 @@ public class UserService implements UserDetailsService {
 	public UserDTO findByid(Long id) {
 		Optional<User> obj = repository.findById(id);
 		User entity = obj.orElseThrow(() -> new ResourceNotFoundException(" Categoria não existe"));
+		return new UserDTO(entity);
+	}
+// retorno o usuario logado 	
+	@Transactional(readOnly = true)
+	public UserDTO findUserLogado() {
+		User entity = authService.authenticated();
 		return new UserDTO(entity);
 	}
 

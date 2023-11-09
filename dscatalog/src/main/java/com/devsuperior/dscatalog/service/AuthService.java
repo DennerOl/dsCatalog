@@ -6,7 +6,11 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,22 +27,22 @@ public class AuthService {
 
 	@Value("${email.password-recover.token.minutes}")
 	private Long tokenMinutes;
-	
+
 	@Value("${email.password-recover.uri}")
-	private String  recoverUri;
-	
+	private String recoverUri;
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private PasswordRecoverRepository passwordRecoverRepository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private EmailService emailService;
-	
+
 	@Transactional
 	public void createRecoverToken(EmailDTO body) {
 // busco o email do usuario no banco 
@@ -46,26 +50,25 @@ public class AuthService {
 		if (user == null) {
 			throw new ResourceNotFoundException("Email não encontrado");
 		}
-		
+
 // se não for null eu salvo no banco 	
 		String token = UUID.randomUUID().toString();
-		
+
 		PasswordRecover entity = new PasswordRecover();
 		entity.setEmail(body.getEmail());
 		entity.setToken(token);
-		entity.setExpiration(Instant.now().plusSeconds(tokenMinutes *60L));
-		
+		entity.setExpiration(Instant.now().plusSeconds(tokenMinutes * 60L));
+
 		entity = passwordRecoverRepository.save(entity);
 // envio o email para o user
-		
-		String text = "Acesse o link para definir uma nova senha\n\n"
-				+ recoverUri + token + " Validade de " + tokenMinutes + "minutos";
-		
+
+		String text = "Acesse o link para definir uma nova senha\n\n" + recoverUri + token + " Validade de "
+				+ tokenMinutes + "minutos";
+
 		emailService.sendEmail(body.getEmail(), "Recuperação de senha", text);
-		
-		
+
 	}
-	
+
 	@Transactional
 	public void saveNewPassword(NewPasswordDTO body) {
 
@@ -79,6 +82,18 @@ public class AuthService {
 // tenho que criptografar a senha do user		
 		user.setPassword(passwordEncoder.encode(body.getPassword()));
 		user = userRepository.save(user);
+	}
+
+// retorna o usuario logado
+	protected User authenticated() {
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
+			String username = jwtPrincipal.getClaim("username");
+			return userRepository.findByEmail(username);
+		} catch (Exception e) {
+			throw new UsernameNotFoundException("Invalid user");
+		}
 	}
 
 }
